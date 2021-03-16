@@ -88,7 +88,9 @@ def get_target_pod(mail):
 
 
 def post_part(part, pod):
-    url = f'https://{pod}.scanarium.com/cgi-bin/scan-data'
+    pod_domain = CONFIG.get('pod', 'domain')
+    pod_path = CONFIG.get('pod', 'path')
+    url = f'https://{pod}.{pod_domain}{pod_path}'
 
     package_name = CONFIG.get('package', 'name')
     package_version = CONFIG.get('package', 'version')
