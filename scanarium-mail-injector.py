@@ -1,13 +1,27 @@
 #!/usr/bin/env python3
 
+import configparser
 import email
 import email.policy
+import os
 import requests
 import sys
 
 
 class InjectorException(RuntimeError):
     pass
+
+
+def load_config():
+    config = configparser.ConfigParser()
+    config_file_abs = os.path.join('/', 'etc', 'scanarium-mail-injector',
+                                   'scanarium-mail-injector.conf')
+    if os.path.isfile(config_file_abs):
+        config.read(config_file_abs)
+    return config
+
+
+CONFIG = load_config()
 
 
 def get_header_non_empty(mail, name):
@@ -80,7 +94,10 @@ def post_part(part, pod):
         '(https://github.com/somechris/scanarium-mail-injector; '
         'scanarium-mail-injector@scanarium.com'
     }
-    auth = ('dummy', 'password-foo')
+    auth = (
+        CONFIG.get('auth', 'username'),
+        CONFIG.get('auth', 'password'),
+    )
     files = {'data': part.get_content()}
     response = requests.post(url, files=files, auth=auth, headers=headers)
     if response.status_code != requests.codes.ok:
