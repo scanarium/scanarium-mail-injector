@@ -3,6 +3,7 @@
 import configparser
 import email
 import email.policy
+import json
 import os
 import requests
 import sys
@@ -83,8 +84,12 @@ def assert_valid_message(mail, from_address):
         raise InjectorException('Neither SPF nor DKIM is in place')
 
 
-def get_target_pod(mail):
-    return 'qchris'
+def get_target_pod(address):
+    mapping_path = CONFIG.get('pod', 'mapping')
+    with open(mapping_path, 'r') as file:
+        mapping = json.load(file)
+    pod = mapping[address]
+    return pod
 
 
 def post_part(part, pod):
@@ -131,7 +136,7 @@ def parse():
 
     from_address = get_from_address(mail)
     assert_valid_message(mail, from_address)
-    post_images(mail, get_target_pod(mail))
+    post_images(mail, get_target_pod(from_address))
 
 
 if __name__ == "__main__":
