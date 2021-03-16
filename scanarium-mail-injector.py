@@ -89,10 +89,14 @@ def get_target_pod(mail):
 
 def post_part(part, pod):
     url = f'https://{pod}.scanarium.com/cgi-bin/scan-data'
+
+    package_name = CONFIG.get('package', 'name')
+    package_version = CONFIG.get('package', 'version')
+    package_url = CONFIG.get('package', 'url')
+    package_email = CONFIG.get('package', 'email')
     headers = {
-        'user-agent': 'scanarium-mail-injector/0.1 '
-        '(https://github.com/somechris/scanarium-mail-injector; '
-        'scanarium-mail-injector@scanarium.com'
+        'user-agent': f'{package_name}/{package_version} '
+        f'({package_url}; {package_email})'
     }
     auth = (
         CONFIG.get('auth', 'username'),
